@@ -1,6 +1,6 @@
 # MoonWalk Parser
 
-[test](http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=03&nocontrols=1&nocontrols_translations=1)
+[![Build Status](https://travis-ci.org/nekko-ru/moonwalk-parser.svg?branch=master)](https://travis-ci.org/nekko-ru/moonwalk-parser)
 
 Парсит списки аниме сериалов, фильмов в удобные для работы обьекты, а так же группирует переводы.
 
