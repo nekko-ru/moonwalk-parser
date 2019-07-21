@@ -1,0 +1,70 @@
+{
+	"title": "Психо-паспорт ТВ-1",
+    "title_en": "Psycho-pass TV-1",
+    "title_or": "original name",
+    "annotation": "События аниме происходят в 2112 году. В этом будущем можно мгновенно измерить психическое состояние любого лица и вероятность совершения им преступлений устройством под названием «Психо-Паспорт», установленным на теле каждого гражданина.",
+    "description": "События аниме происходят в 2112 году. В этом будущем можно мгновенно измерить психическое состояние любого лица и вероятность совершения им преступлений устройством под названием «Психо-Паспорт», установленным на теле каждого гражданина. Если индекс коэффициента преступности оказывается слишком высок, человек вынужден пройти принудительное лечение либо, при необходимости, подлежит уничтожению. Выполнением этой задачи занимаются специальные команды из Бюро общественной безопасности, состоящие из потенциальных преступников (так называемых «псов»), и инспекторов полиции, осуществляющих надзор над своими подопечными. Члены каждой команды получают особое оружие - Доминатор, способное открывать огонь только по тем, чей коэффициент преступности превышает допустимую норму. История повествует о Синье Когами, который должен раскрывать преступления в этом тёмном будущем.",
+    "posters": ["https://st.kp.yandex.net/images/film_iphone/iphone360_707090.jpg"],
+    "type": "serial",
+    "genres": [
+        "аниме",
+        "мультфильм",
+        "приключения",
+        "фантастика"
+    ],
+    "translators": [
+    	{
+    		"id": 10,
+    		"name": "AniLib",
+    		"episodes": [
+    		    "http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=01&nocontrols=1",
+    		    "http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=02&nocontrols=1",
+    		    "http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=03&nocontrols=1"
+    		]
+    	},
+    	{
+    		"id": 13,
+    		"name": "AniDUB",
+    		"episodes": [
+    		    "http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=01&nocontrols=1",
+    		    "http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=02&nocontrols=1",
+    		    "http://moonwalk.cc/serial/05637d0c8b3e7e2f23caaa4ab6ce0ee2/iframe?season=01&episode=03&nocontrols=1&nocontrols_translations=1"
+    		]
+    	}
+    ],
+    "status": "Вышло",
+    "year": "2012",
+    "world_art_id": "2220",
+    "kinopoisk_id": "707090",
+    "countries": [
+        "Япония"
+    ],
+    "actors": [
+        "Кана Ханадзава",
+        "Роберт МакКолам",
+        "Кейт Оксли",
+        "Томокадзу Сэки",
+        "Сидзука Ито",
+        "Кэндзи Нодзима",
+        "Лидия Маккей",
+        "Терри Доти",
+        "Брайан Мэсси",
+        "Кинрю Аримото"
+    ],
+    "directors": [
+        "Наоёси Сиотани",
+        "Кацуюки Мотохиро",
+        "Ицуро Кавасаки"
+    ],
+    "studios": [
+        "Dentsu",
+        "Fuji Television Network Inc.",
+        "Index",
+        "Kyoraku Sangyo",
+        "Nitroplus",
+        "Production I.G.",
+        "Sony Music Entertainment",
+        "Tatsunoko Productions Co. Ltd.",
+        "Toho Company"
+    ]
+}
