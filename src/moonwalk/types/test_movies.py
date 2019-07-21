@@ -1,7 +1,4 @@
-from typing import Dict
-
 import json
-import unittest
 from unittest import TestCase
 
 from src.moonwalk.types.base import movies_from_dict, movies_to_dict
@@ -9,7 +6,7 @@ from src.moonwalk.types.base import movies_from_dict, movies_to_dict
 
 class TestMovies(TestCase):
     def test_from_dict(self):
-        with open('../../../mock-data/movies_anime.json') as f:
+        with open('./mock-data/movies_anime.json') as f:
             data = json.load(f)
 
         for case in data['report']['movies'][:10]:
@@ -28,7 +25,7 @@ class TestMovies(TestCase):
                 self.assertEqual(movie.material_data.actors, case['material_data']['actors'])
 
     def test_to_dict(self):
-        with open('../../../mock-data/movies_anime.json') as f:
+        with open('./mock-data/movies_anime.json') as f:
             data = json.load(f)
 
         for case in data['report']['movies'][:10]:
