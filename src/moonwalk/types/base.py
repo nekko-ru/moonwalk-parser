@@ -21,7 +21,6 @@ T = TypeVar("T")
 
 
 def from_none(x: Any) -> Any:
-    assert x is None
     return x
 
 
@@ -34,7 +33,7 @@ def from_union(fs, x):
     for f in fs:
         try:
             return f(x)
-        except:
+        except Exception as e:
             pass
     assert False
 
