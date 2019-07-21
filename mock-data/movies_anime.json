@@ -219,89 +219,6 @@
           }
         },
         {
-          "title_ru": "D: Жажда крови",
-          "title_en": "Vampire Hunter D: Bloodlust",
-          "year": 2000,
-          "duration": {
-            "seconds": 0,
-            "human": "00:00"
-          },
-          "kinopoisk_id": 8236,
-          "world_art_id": 96,
-          "pornolab_id": null,
-          "token": "868e12de6abf4d65",
-          "type": "movie",
-          "camrip": false,
-          "source_type": "BDRemux",
-          "source_quality_type": null,
-          "instream_ads": false,
-          "directors_version": false,
-          "iframe_url": "http://moonwalk.cc/video/868e12de6abf4d65/iframe",
-          "trailer_token": "3d0c013888681baa",
-          "trailer_iframe_url": "https://trailerclub.me/video/3d0c013888681baa/iframe",
-          "translator": "MC Entertainment",
-          "translator_id": 51,
-          "added_at": "2014-11-20 14:32:42",
-          "category": "anime",
-          "block": {
-            "blocked_at": null,
-            "block_ru": false,
-            "block_ua": false
-          },
-          "material_data": {
-            "updated_at": "2019-07-16 12:12:42",
-            "poster": "https://st.kp.yandex.net/images/film_iphone/iphone360_8236.jpg",
-            "year": 2000,
-            "tagline": "«When the Sun Sets... The Hunt Begins»",
-            "description": "Когда-то вампиры правили миром... и сейчас, даже почти истребленные, они все еще сильнее людей. Семья похищенной вампиром девушки нанимает охотников, чтобы вернуть ее живой, или убить, если будет слишком поздно спасти...\r\n\r\nНо отношения Красавицы и Чудовища вовсе не так просты, как кажется людям. Экранизация романов Хидэюки Кикути, верная духу выдающего иллюстратора Ёситаки Амано, блестяще передает мрачно-роскошную атмосферу оригинала - готический ужас, перенесенный в далекое будущее.",
-            "age": 16,
-            "countries": [
-              "Япония",
-              "США"
-            ],
-            "genres": [
-              "аниме",
-              "мультфильм",
-              "фантастика",
-              "фэнтези",
-              "боевик",
-              "триллер",
-              "мелодрама",
-              "приключения"
-            ],
-            "actors": [
-              "Эндрю Филпот",
-              "Джон Рафтер Ли",
-              "Памела Адлон",
-              "Уэнди Ли",
-              "Майкл МакШейн",
-              "Джулия Флетчер",
-              "Мэтт МакКензи",
-              "Джон Ди Маджио",
-              "Алекс Фернандес",
-              "Джек Флетчер"
-            ],
-            "directors": [
-              "Ёсиаки Кавадзири"
-            ],
-            "studios": [
-              "BMG Funhouse",
-              "Goodhill Vision",
-              "Mad House Ltd.",
-              "Movic Inc.",
-              "Softcapital",
-              "Tristone Entertainment Inc.",
-              "Vampire Hunter D Prod. Committee"
-            ],
-            "kinopoisk_rating": 7.725,
-            "kinopoisk_votes": 10491,
-            "imdb_rating": 7.7,
-            "imdb_votes": 26928,
-            "mpaa_rating": 0.0,
-            "mpaa_votes": 0
-          }
-        },
-        {
           "title_ru": "D: Охотник на вампиров (видео)",
           "title_en": "Kyûketsuki hantâ D (Vampire Hunter D)",
           "year": 1985,
@@ -609,37 +526,6 @@
             "imdb_votes": 227,
             "mpaa_rating": null,
             "mpaa_votes": null
-          }
-        },
-        {
-          "title_ru": "Re: Жизнь в альтернативном мире с нуля. Снежные воспоминания",
-          "title_en": "Re: Zero kara hajimeru isekai seikatsu OVA",
-          "year": null,
-          "duration": {
-            "seconds": 3611,
-            "human": "01:00"
-          },
-          "kinopoisk_id": null,
-          "world_art_id": 9600,
-          "pornolab_id": null,
-          "token": "31cee400af198647",
-          "type": "movie",
-          "camrip": false,
-          "source_type": null,
-          "source_quality_type": null,
-          "instream_ads": false,
-          "directors_version": false,
-          "iframe_url": "http://moonwalk.cc/video/31cee400af198647/iframe",
-          "trailer_token": null,
-          "trailer_iframe_url": null,
-          "translator": "SHIZA Project",
-          "translator_id": 95,
-          "added_at": "2019-07-18 02:31:47",
-          "category": "anime",
-          "block": {
-            "blocked_at": null,
-            "block_ru": false,
-            "block_ua": false
           }
         },
         {
