@@ -137,10 +137,10 @@ class MaterialData:
     def from_dict(obj: Any) -> 'MaterialData':
         assert isinstance(obj, dict)
         updated_at = from_union([from_datetime, from_none], obj.get("updated_at"))
-        poster = from_union([from_str, from_none], obj.get("poster"))
+        poster = from_union([from_str, from_none], obj.get("poster", ''))
         year = from_union([from_int, from_none], obj.get("year"))
-        tagline = from_union([from_str, from_none], obj.get("tagline"))
-        description = from_union([from_str, from_none], obj.get("description"))
+        tagline = from_union([from_str, from_none], obj.get("tagline", ''))
+        description = from_union([from_str, from_none], obj.get("description", ''))
         age = from_union([from_int, from_none], obj.get("age"))
         countries = from_union([lambda x: from_list(from_str, x), from_none], obj.get("countries"))
         genres = from_union([lambda x: from_list(from_str, x), from_none], obj.get("genres"))
