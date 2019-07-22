@@ -2,6 +2,7 @@ from typing import List
 
 import os
 import requests
+from loguru import logger as log
 from dataclasses import dataclass
 
 from src.moonwalk.types.base import Serials
@@ -28,15 +29,19 @@ class MoonwalkAPI:
     base_url: str = 'http://moonwalk.cc/api'
 
     def get_serials(self) -> List[Serials]:
+        log.debug('выполнение запроса на получение списка сериалов')
         # выполняем http запрос к видео балансеру для получения всех сериалов
         # и сразу же преобразуем в json
         r = requests.get(f'{self.base_url}/serials_anime.json', params={
             'api_token': self.api_token
-        }).json()
+        })
+        log.debug(f'статус ответа {r.status_code}')
+
+        res = r.json()
 
         # каждый обьект из json поля 'serials' преобразует в класс для более удобной работы
         # и создаем список из сериалов
-        return list(map(Serials.from_dict, r['report']['serials']))
+        return list(map(Serials.from_dict, res['report']['serials']))
 
     def get_movies(self):
         pass

@@ -1,8 +1,10 @@
 certifi==2019.6.16
 chardet==3.0.4
+codecov==2.0.15
 coverage==4.5.3
 dataclasses==0.6
 idna==2.8
+loguru==0.3.2
 python-dateutil==2.8.0
 requests==2.22.0
 six==1.12.0
