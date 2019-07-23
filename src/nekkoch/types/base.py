@@ -28,8 +28,7 @@ def from_union(fs, x):
 
 
 def from_str(x: Any) -> str:
-    assert isinstance(x, str)
-    return x
+    return x or ''
 
 
 def from_list(f: Callable[[Any], T], x: Any) -> List[T]:

@@ -43,12 +43,12 @@ class Transformer:
         :param serial:
         :return:
         """
-        key = serial.kinopoisk_id or serial.world_art_id
+        key = serial.title_ru
 
         anime = self.storage.get(key, None)
         if anime is None:
             try:
-                self.storage[serial.kinopoisk_id] = Anime(
+                self.storage[key] = Anime(
                     title=serial.title_ru,
                     title_en=serial.title_en,
                     title_or='-',
@@ -77,7 +77,7 @@ class Transformer:
                 # на случай если есть сломаные (без material_data)
                 pass
         else:
-            self.storage[serial.kinopoisk_id].translators.append(Translator(
+            self.storage[key].translators.append(Translator(
                 id=serial.translator_id,
                 name=serial.translator,
                 episodes=_get_episodes(serial)

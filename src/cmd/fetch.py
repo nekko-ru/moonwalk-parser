@@ -7,9 +7,10 @@ from src.transform import Transformer
 log.info('Получение списка всех сериалов')
 data = MoonwalkAPI().get_serials()
 
-tr = Transformer(data[:10])
+tr = Transformer(data)
 log.debug(f'После преобразования {len(tr.storage)}')
 
+log.debug(f'Создание сериалов на сервере')
 for serial in tr.storage.values():
     headers = {
         'Content-Type': "application/json",
@@ -22,3 +23,7 @@ for serial in tr.storage.values():
         "access_token": "T4VJeTrD_ZqLmqFx3wknxPTLr-tgiyy0ovNpfQ97nRHg4orAFtGYsq1NoO9DyT1vBpFIMHHrra35VkDw3_vZtq3znKXFuruQaiA5FkQ01fJy2euW_1tD1wmyRrhN8Dg1-zyEuq_-gSqG0HPFrigGcbY4HLt3-TDkP_ROJX9IQjs="}
 
     res = requests.request("POST", url, json=serial.to_dict(), headers=headers, params=querystring)
+    if res.ok:
+        log.debug(f' * создано {serial.title}')
+    else:
+        log.error(res.json()['data'])
