@@ -72,7 +72,8 @@ class Transformer:
                         episodes=_get_episodes(serial)
                     )]
                 )
-            except AttributeError:
+            except AttributeError as e:
+                log.error(e)
                 # на случай если есть сломаные (без material_data)
                 pass
         else:
