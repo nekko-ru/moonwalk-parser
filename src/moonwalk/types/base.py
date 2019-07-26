@@ -44,7 +44,7 @@ def from_int(x: Any) -> int:
 
 
 def from_str(x: Any) -> str:
-    return x or '-'
+    return x
 
 
 def from_datetime(x: Any) -> datetime:
@@ -73,21 +73,21 @@ def to_class(c: Type[T], x: Any) -> dict:
 
 @dataclass
 class Block:
-    blocked_at: None
+    blocked_at: Optional[str]
     block_ru: Optional[bool]
     block_ua: Optional[bool]
 
     @staticmethod
     def from_dict(obj: Any) -> 'Block':
         assert isinstance(obj, dict)
-        blocked_at = from_none(obj.get("blocked_at"))
+        blocked_at = from_union([from_str, from_none], obj.get("blocked_at"))
         block_ru = from_union([from_bool, from_none], obj.get("block_ru"))
         block_ua = from_union([from_bool, from_none], obj.get("block_ua"))
         return Block(blocked_at, block_ru, block_ua)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["blocked_at"] = from_none(self.blocked_at)
+        result["blocked_at"] = from_union([from_str, from_none], self.blocked_at)
         result["block_ru"] = from_union([from_bool, from_none], self.block_ru)
         result["block_ua"] = from_union([from_bool, from_none], self.block_ua)
         return result
@@ -131,6 +131,11 @@ class MaterialData:
     imdb_votes: Optional[int]
     mpaa_rating: Optional[int]
     mpaa_votes: Optional[int]
+
+    @staticmethod
+    def default(obj: Any) -> 'MaterialData':
+        return MaterialData(datetime.now(), 'https://via.placeholder.com/450', 2019, '-', '-', 2019, [], [], [], [], [],
+                            5.0, 0, 5.0, 0, 5, 0)
 
     @staticmethod
     def from_dict(obj: Any) -> 'MaterialData':
@@ -227,7 +232,7 @@ class Movies:
         added_at = from_union([from_datetime, from_none], obj.get("added_at"))
         category = from_union([from_str, from_none], obj.get("category"))
         block = from_union([Block.from_dict, from_none], obj.get("block"))
-        material_data = from_union([MaterialData.from_dict, from_none], obj.get("material_data"))
+        material_data = from_union([MaterialData.from_dict, MaterialData.default], obj.get("material_data"))
         return Movies(title_ru, title_en, year, duration, kinopoisk_id, world_art_id, pornolab_id, token, type, camrip, source_type, source_quality_type, instream_ads, directors_version, iframe_url, trailer_token, trailer_iframe_url, translator, translator_id, added_at, category, block, material_data)
 
     def to_dict(self) -> dict:
@@ -321,7 +326,7 @@ class Serials:
         category = from_union([from_str, from_none], obj.get("category"))
         block = from_union([Block.from_dict, from_none], obj.get("block"))
         season_episodes_count = from_union([lambda x: from_list(SeasonEpisodesCount.from_dict, x), from_none], obj.get("season_episodes_count"))
-        material_data = from_union([MaterialData.from_dict, from_none], obj.get("material_data"))
+        material_data = from_union([MaterialData.from_dict, MaterialData.default], obj.get("material_data", None))
         return Serials(title_ru, title_en, year, token, type, kinopoisk_id, world_art_id, translator, translator_id, iframe_url, trailer_token, trailer_iframe_url, seasons_count, episodes_count, category, block, season_episodes_count, material_data)
 
     def to_dict(self) -> dict:
