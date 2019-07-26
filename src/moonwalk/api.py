@@ -41,7 +41,7 @@ class MoonwalkAPI:
 
         # каждый обьект из json поля 'serials' преобразует в класс для более удобной работы
         # и создаем список из сериалов
-        return list(map(Serials.from_dict, res['report']['serials']))
+        return [Serials.from_dict(i) for i in res['report']['serials']]
 
     def get_movies(self):
         pass

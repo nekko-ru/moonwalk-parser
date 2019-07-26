@@ -33,8 +33,16 @@ class Transformer:
     # ключ - kinopoisk_id или world_art_id если нету первого
     storage: Dict[int, Anime] = {}
 
+    # список аниме которые не были импортированы из за отсутствия каких либо важных данных
+    with_error: List[Serials] = []
+
     def __init__(self, raw: List[Serials]):
         for serial in raw:
+            self._create_or_append(serial)
+
+        # повторяем еще раз для аниме с ошибками
+        # тк в %90 это переводы без material_data и их нужно аттачить
+        for serial in self.with_error:
             self._create_or_append(serial)
 
     def _create_or_append(self, serial: Serials):
@@ -48,6 +56,10 @@ class Transformer:
         anime = self.storage.get(key, None)
         if anime is None:
             try:
+                # на случай если мы руками заполнили material_data (своеобразный fallback для сералов без material_data)
+                if serial.material_data.poster == 'https://via.placeholder.com/450':
+                    self.with_error.append(serial)
+                    return
                 self.storage[key] = Anime(
                     title=serial.title_ru,
                     title_en=serial.title_en,
@@ -74,7 +86,7 @@ class Transformer:
                 )
             except AttributeError as e:
                 log.error(e)
-                # на случай если есть сломаные (без material_data)
+                # на случай если есть сломаные (не только без material_data)
                 pass
         else:
             self.storage[key].translators.append(Translator(
