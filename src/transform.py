@@ -1,5 +1,5 @@
 import os
-from typing import List, Dict
+from typing import List, Dict, Any
 
 import requests
 from loguru import logger as log
@@ -45,18 +45,35 @@ class Update:
     def __init__(self, raw: List[Serials]):
         for serial in raw:
             try:
-                anime = self.get_by_title(serial.title_ru)
+                data = self.get_by_title(serial.title_ru)
+                anime = Anime.from_dict(data)
                 log.debug(f'Нашли id={anime.id} для {serial.title_ru}')
 
-                for i, tr in enumerate(anime.translators):
-                    if tr.name == serial.translator or tr.id == serial.translator_id:
-                        anime.translators[i].episodes = _get_episodes(serial)
-                    else:
-                        anime.translators.append(Translator(
-                            id=serial.translator_id,
-                            name=serial.translator,
-                            episodes=_get_episodes(serial)
-                        ))
+                def search(d):
+                    for i, tr in enumerate(d):
+                        if tr.name == serial.translator or tr.id == serial.translator_id:
+                            return i
+                    return -1
+
+                idx = search(anime.translators)
+                if idx == -1:
+                    anime.translators.append(Translator(
+                        id=serial.translator_id,
+                        name=serial.translator,
+                        episodes=_get_episodes(serial)
+                    ))
+                else:
+                    anime.translators[idx].episodes = _get_episodes(serial)
+
+                # for i, tr in enumerate(anime.translators):
+                #     if tr.name == serial.translator or tr.id == serial.translator_id:
+                #         anime.translators[i].episodes = _get_episodes(serial)
+                #     else:
+                #         anime.translators.append(Translator(
+                #             id=serial.translator_id,
+                #             name=serial.translator,
+                #             episodes=_get_episodes(serial)
+                #         ))
                 self.updated.append(
                     self.update(anime.id, anime.translators)
                 )
@@ -78,7 +95,7 @@ class Update:
                     else:
                         raise Exception(res.json()['data'])
 
-    def get_by_title(self, title: str) -> Anime:
+    def get_by_title(self, title: str) -> Dict[str, Any]:
         """
         Получение аниме по его названию из API
         :param title: название
@@ -98,7 +115,7 @@ class Update:
             'anime_id': out[0]['id'],
             'access_token': self.access_token
         })
-        return Anime.from_dict(res.json()['anime'])
+        return res.json()['anime']
 
     def update(self, anime_id: int, translators: List[Translator]) -> Anime:
         res = requests.post(f'{self.url}/anime.update', params={

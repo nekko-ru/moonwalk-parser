@@ -51,7 +51,8 @@ class MoonwalkAPI:
         # выполняем http запрос к видео балансеру для получения всех сериалов
         # и сразу же преобразуем в json
         r = requests.get(f'{self.base_url}/serials_updates.json', params={
-            'api_token': self.api_token
+            'api_token': self.api_token,
+            'category': 'Anime'
         })
         log.debug(f'статус ответа {r.status_code}')
 
