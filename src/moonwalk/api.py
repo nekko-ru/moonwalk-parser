@@ -44,13 +44,26 @@ class MoonwalkAPI:
         return [Serials.from_dict(i) for i in res['report']['serials']]
 
     def get_movies(self):
-        pass
+        raise NotImplemented
 
     def updates_serials(self):
-        pass
+        log.debug('выполнение запроса на получение списка обновлений сериалов')
+        # выполняем http запрос к видео балансеру для получения всех сериалов
+        # и сразу же преобразуем в json
+        r = requests.get(f'{self.base_url}/serials_updates.json', params={
+            'api_token': self.api_token
+        })
+        log.debug(f'статус ответа {r.status_code}')
+
+        res = r.json()
+
+        # каждый обьект из json поля 'serials' преобразует в класс для более удобной работы
+        # и создаем список из сериалов
+        # важно: тк это список обновлений и для того что бы сохранить порядок в бд мы добавляем с конца
+        return [Serials.from_dict(i['serial']) for i in res['updates'][::-1]]
 
     def updates_movies(self):
-        pass
+        raise NotImplemented
 
 
 if __name__ == '__main__':
