@@ -1,3 +1,4 @@
+import os
 from typing import List, Dict
 
 import requests
@@ -39,6 +40,7 @@ class Update:
     """
     url: str = "http://localhost:8084"
     updated: List[Anime] = []
+    access_token: str = os.getenv('NEKKOCH_ACCESS_TOKEN', '')
 
     def __init__(self, raw: List[Serials]):
         for serial in raw:
@@ -66,9 +68,7 @@ class Update:
 
                 for serial in CreateNew([serial]).storage.values():
 
-                    querystring = {
-                        # хохохо, не бойтесь локальный токен, так еще и без refresh_token'а
-                        "access_token": "T4VJeTrD_ZqLmqFx3wknxPTLr-tgiyy0ovNpfQ97nRHg4orAFtGYsq1NoO9DyT1vBpFIMHHrra35VkDw3_vZtq3znKXFuruQaiA5FkQ01fJy2euW_1tD1wmyRrhN8Dg1-zyEuq_-gSqG0HPFrigGcbY4HLt3-TDkP_ROJX9IQjs="}
+                    querystring = {"access_token": self.access_token}
 
                     # отправка запроса
                     # WARNING: замените на свой способ отправки новой серии
@@ -87,7 +87,7 @@ class Update:
 
         res = requests.get(f'{self.url}/anime.search', params={
             'q': title,
-            'access_token': "T4VJeTrD_ZqLmqFx3wknxPTLr-tgiyy0ovNpfQ97nRHg4orAFtGYsq1NoO9DyT1vBpFIMHHrra35VkDw3_vZtq3znKXFuruQaiA5FkQ01fJy2euW_1tD1wmyRrhN8Dg1-zyEuq_-gSqG0HPFrigGcbY4HLt3-TDkP_ROJX9IQjs="
+            'access_token': self.access_token
         })
 
         out = res.json()['animes']
@@ -96,14 +96,14 @@ class Update:
 
         res = requests.get(f'{self.url}/anime.get', params={
             'anime_id': out[0]['id'],
-            'access_token': "T4VJeTrD_ZqLmqFx3wknxPTLr-tgiyy0ovNpfQ97nRHg4orAFtGYsq1NoO9DyT1vBpFIMHHrra35VkDw3_vZtq3znKXFuruQaiA5FkQ01fJy2euW_1tD1wmyRrhN8Dg1-zyEuq_-gSqG0HPFrigGcbY4HLt3-TDkP_ROJX9IQjs="
+            'access_token': self.access_token
         })
         return Anime.from_dict(res.json()['anime'])
 
     def update(self, anime_id: int, translators: List[Translator]) -> Anime:
         res = requests.post(f'{self.url}/anime.update', params={
             'anime_id': anime_id,
-            'access_token': "T4VJeTrD_ZqLmqFx3wknxPTLr-tgiyy0ovNpfQ97nRHg4orAFtGYsq1NoO9DyT1vBpFIMHHrra35VkDw3_vZtq3znKXFuruQaiA5FkQ01fJy2euW_1tD1wmyRrhN8Dg1-zyEuq_-gSqG0HPFrigGcbY4HLt3-TDkP_ROJX9IQjs="
+            'access_token': self.access_token
         }, json={
             'translators': [tr.to_dict() for tr in translators]
         })
