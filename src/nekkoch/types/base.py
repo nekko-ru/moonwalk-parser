@@ -70,6 +70,7 @@ class Translator:
 
 @dataclass
 class Anime:
+    id: Optional[int]
     title: Optional[str]
     title_en: Optional[str]
     title_or: Optional[str]
@@ -91,6 +92,7 @@ class Anime:
     @staticmethod
     def from_dict(obj: Any) -> 'Anime':
         assert isinstance(obj, dict)
+        id_ = from_union([from_int, from_none], obj.get("id"))
         title = from_union([from_str, from_none], obj.get("title"))
         title_en = from_union([from_str, from_none], obj.get("title_en"))
         title_or = from_union([from_str, from_none], obj.get("title_or"))
@@ -102,16 +104,17 @@ class Anime:
         translators = from_union([lambda x: from_list(Translator.from_dict, x), from_none], obj.get("translators"))
         status = from_union([from_str, from_none], obj.get("status"))
         year = from_union([from_none, lambda x: int(from_str(x))], obj.get("year"))
-        world_art_id = from_union([from_none, lambda x: int(from_str(x))], obj.get("world_art_id"))
-        kinopoisk_id = from_union([from_none, lambda x: int(from_str(x))], obj.get("kinopoisk_id"))
+        world_art_id = from_union([from_str, from_none], obj.get("world_art_id"))
+        kinopoisk_id = from_union([from_str, from_none], obj.get("kinopoisk_id"))
         countries = from_union([lambda x: from_list(from_str, x), from_none], obj.get("countries"))
         actors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("actors"))
         directors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("directors"))
         studios = from_union([lambda x: from_list(from_str, x), from_none], obj.get("studios"))
-        return Anime(title, title_en, title_or, annotation, description, posters, type, genres, translators, status, year, world_art_id, kinopoisk_id, countries, actors, directors, studios)
+        return Anime(id_, title, title_en, title_or, annotation, description, posters, type, genres, translators, status, year, world_art_id, kinopoisk_id, countries, actors, directors, studios)
 
     def to_dict(self) -> dict:
         result: dict = {}
+        result["id"] = from_union([from_int, from_none], self.id)
         result["title"] = from_union([from_str, from_none], self.title)
         result["title_en"] = from_union([from_str, from_none], self.title_en)
         result["title_or"] = from_union([from_str, from_none], self.title_or)
