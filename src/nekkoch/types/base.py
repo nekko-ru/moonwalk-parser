@@ -28,7 +28,7 @@ def from_union(fs, x):
 
 
 def from_str(x: Any) -> str:
-    return x or ''
+    return x or '-'
 
 
 def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
@@ -95,7 +95,7 @@ class Anime:
         title_en = from_union([from_str, from_none], obj.get("title_en"))
         title_or = from_union([from_str, from_none], obj.get("title_or"))
         annotation = from_union([from_str, from_none], obj.get("annotation"))
-        description = from_union([from_str, from_none], obj.get("description"))
+        description = from_union([from_str, from_none], obj.get("description", "-"))
         posters = from_union([lambda x: from_list(from_str, x), from_none], obj.get("posters"))
         type = from_union([from_str, from_none], obj.get("type"))
         genres = from_union([lambda x: from_list(from_str, x), from_none], obj.get("genres"))

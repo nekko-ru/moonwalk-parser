@@ -2,12 +2,12 @@
 import requests
 from loguru import logger as log
 from src.moonwalk.api import MoonwalkAPI
-from src.transform import Transformer
+from src.transform import CreateNew
 
 log.info('Получение списка всех сериалов')
 data = MoonwalkAPI().get_serials()
 
-tr = Transformer(data)
+tr = CreateNew(data)
 log.debug(f'После преобразования {len(tr.storage)}')
 
 log.debug(f'Создание сериалов на сервере')
@@ -31,4 +31,4 @@ for serial in tr.storage.values():
     if res.ok:
         log.debug(f' * создано {serial.title}')
     else:
-        log.error(res.json()['data'])
+        raise Exception(res.json()['data'])

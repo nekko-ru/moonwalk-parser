@@ -144,7 +144,7 @@ class MaterialData:
         poster = from_union([from_str, from_none], obj.get("poster", ''))
         year = from_union([from_int, from_none], obj.get("year"))
         tagline = from_union([from_str, from_none], obj.get("tagline", ''))
-        description = from_union([from_str, from_none], obj.get("description", ''))
+        description = from_union([from_str, from_none], obj.get("description", '-'))
         age = from_union([from_int, from_none], obj.get("age"))
         countries = from_union([lambda x: from_list(from_str, x), from_none], obj.get("countries"))
         genres = from_union([lambda x: from_list(from_str, x), from_none], obj.get("genres"))
