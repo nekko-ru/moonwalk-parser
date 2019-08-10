@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 from typing import Optional, List, Any, TypeVar, Callable, Type, cast
 
+from src.moonwalk.types.base import from_float, to_float
 
 T = TypeVar("T")
 
@@ -84,6 +85,8 @@ class Anime:
     year: Optional[int]
     world_art_id: Optional[int]
     kinopoisk_id: Optional[int]
+    rating: Optional[float]
+    votes: Optional[int]
     countries: Optional[List[str]]
     actors: Optional[List[str]]
     directors: Optional[List[str]]
@@ -106,11 +109,13 @@ class Anime:
         year = from_union([from_none, lambda x: int(from_str(x))], obj.get("year"))
         world_art_id = from_union([from_str, from_none], obj.get("world_art_id"))
         kinopoisk_id = from_union([from_str, from_none], obj.get("kinopoisk_id"))
+        rating = from_union([from_float, from_none], obj.get("rating"))
+        votes = from_union([from_int, from_none], obj.get("votes"))
         countries = from_union([lambda x: from_list(from_str, x), from_none], obj.get("countries"))
         actors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("actors"))
         directors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("directors"))
         studios = from_union([lambda x: from_list(from_str, x), from_none], obj.get("studios"))
-        return Anime(id_, title, title_en, title_or, annotation, description, posters, type, genres, translators, status, year, world_art_id, kinopoisk_id, countries, actors, directors, studios)
+        return Anime(id_, title, title_en, title_or, annotation, description, posters, type, genres, translators, status, year, world_art_id, kinopoisk_id, rating, votes, countries, actors, directors, studios)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -128,6 +133,8 @@ class Anime:
         result["year"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.year)
         result["world_art_id"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.world_art_id)
         result["kinopoisk_id"] = from_union([lambda x: from_none((lambda x: is_type(type(None), x))(x)), lambda x: from_str((lambda x: str((lambda x: is_type(int, x))(x)))(x))], self.kinopoisk_id)
+        result["rating"] = from_union([to_float, from_none], self.rating)
+        result["votes"] = from_union([from_int, from_none], self.votes)
         result["countries"] = from_union([lambda x: from_list(from_str, x), from_none], self.countries)
         result["actors"] = from_union([lambda x: from_list(from_str, x), from_none], self.actors)
         result["directors"] = from_union([lambda x: from_list(from_str, x), from_none], self.directors)

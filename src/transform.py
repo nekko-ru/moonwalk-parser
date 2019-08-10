@@ -164,7 +164,7 @@ class CreateNew:
                     title=serial.title_ru,
                     title_en=serial.title_en,
                     title_or='-',
-                    annotation='-',
+                    annotation=serial.material_data.description,
                     description=serial.material_data.description,
                     posters=[serial.material_data.poster],
                     type=serial.type,
@@ -177,6 +177,8 @@ class CreateNew:
                     actors=serial.material_data.actors or [],
                     directors=serial.material_data.directors or [],
                     studios=serial.material_data.studios or [],
+                    rating=serial.material_data.kinopoisk_rating,
+                    votes=serial.material_data.kinopoisk_votes,
                     # заполняем перевод
                     translators=[Translator(
                         id=serial.translator_id,
