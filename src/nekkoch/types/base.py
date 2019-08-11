@@ -93,7 +93,7 @@ class Anime:
     studios: Optional[List[str]]
 
     @staticmethod
-    def from_dict(obj: Any) -> 'Anime':
+    def from_dict(obj: Any) -> 'AnimeModel':
         assert isinstance(obj, dict)
         id_ = from_union([from_int, from_none], obj.get("id"))
         title = from_union([from_str, from_none], obj.get("title"))

@@ -4,6 +4,8 @@ from loguru import logger as log
 from src.moonwalk.api import MoonwalkAPI
 from src.transform import CreateNew, Update
 
+import src.models.AnimeModel
+
 log.info('Получение списка обновлений для сериалов')
 data = MoonwalkAPI().updates_serials()
 

@@ -6,7 +6,7 @@ from playhouse.postgres_ext import ArrayField, PostgresqlExtDatabase
 db = PostgresqlExtDatabase('website_development', host='127.0.0.1', user='postgres', password='postgres')
 
 
-class Anime(Model):
+class AnimeModel(Model):
     aid = IntegerField(primary_key=True, column_name='id')
     title = CharField()
     title_en = CharField()
@@ -21,7 +21,7 @@ class Anime(Model):
     blocked_ru = BooleanField(default=False)
     blocked_ua = BooleanField(default=False)
     world_art_id = CharField()
-    kinopoisk = CharField()
+    kinopoisk_id = CharField()
     countries = ArrayField(CharField)
     actors = ArrayField(CharField)
     directors = ArrayField(CharField)
@@ -34,13 +34,9 @@ class Anime(Model):
         table_name = 'animes'
 
 
-Anime.create_table()
-
-
-class AnimeTranslator(Model):
+class AnimeTranslatorModel(Model):
     id = IntegerField(primary_key=True, column_name='id')
     name = CharField()
-    translator_id = IntegerField(column_name='translator_id')
     anime_id = IntegerField(column_name='anime_id')
     created_at = DateTimeField(default=datetime.now)
     updated_at = DateTimeField(default=datetime.now)
@@ -50,7 +46,7 @@ class AnimeTranslator(Model):
         table_name = 'anime_translators'
 
 
-class Episode(Model):
+class EpisodeModel(Model):
     id = IntegerField(primary_key=True, column_name='id')
     name = CharField()
     stream_url = CharField()

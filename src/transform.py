@@ -1,9 +1,10 @@
 import os
 from typing import List, Dict, Any
 
-import requests
 from loguru import logger as log
+from playhouse.shortcuts import model_to_dict
 
+from src.models.AnimeModel import AnimeModel, AnimeTranslatorModel, EpisodeModel
 from src.moonwalk.types.base import Serials
 from src.nekkoch.types.base import Anime, Translator
 
@@ -46,85 +47,87 @@ class Update:
         for serial in raw:
             try:
                 data = self.get_by_title(serial.title_ru)
-                anime = Anime.from_dict(data)
-                log.debug(f'Нашли id={anime.id} для {serial.title_ru}')
+                log.debug(f'Нашли id={data.aid} для {data.title}')
 
-                def search(d):
-                    for i, tr in enumerate(d):
-                        if tr.name == serial.translator or tr.id == serial.translator_id:
-                            return i
-                    return -1
+                tr, _ = AnimeTranslatorModel.get_or_create(
+                    name=serial.translator,
+                    anime_id=data.aid
+                )
 
-                idx = search(anime.translators)
-                if idx == -1:
-                    anime.translators.append(Translator(
-                        id=serial.translator_id,
-                        name=serial.translator,
-                        episodes=_get_episodes(serial)
-                    ))
-                else:
-                    anime.translators[idx].episodes = _get_episodes(serial)
+                deleted = EpisodeModel.delete().where(EpisodeModel.atid == tr.id).execute()
+                for e_idx, episode in enumerate(_get_episodes(serial)):
+                    EpisodeModel.create(name=e_idx, stream_url=episode, atid=tr.id)
 
-                # for i, tr in enumerate(anime.translators):
-                #     if tr.name == serial.translator or tr.id == serial.translator_id:
-                #         anime.translators[i].episodes = _get_episodes(serial)
-                #     else:
-                #         anime.translators.append(Translator(
-                #             id=serial.translator_id,
-                #             name=serial.translator,
-                #             episodes=_get_episodes(serial)
-                #         ))
                 self.updated.append(
-                    self.update(anime.id, anime.translators)
+                    data
                 )
             except Exception as e:
                 log.exception(e)
 
             except AnimeNotExist:
                 log.info('Аниме не было найдено, нужно создать его')
+                prepared = Anime(
+                    id=None,
+                    title=serial.title_ru,
+                    title_en=serial.title_en,
+                    title_or='-',
+                    annotation=serial.material_data.description,
+                    description=serial.material_data.description,
+                    posters=[serial.material_data.poster],
+                    type=serial.type,
+                    genres=serial.material_data.genres or [],
+                    status='Закончено',
+                    year=serial.material_data.year,
+                    world_art_id=serial.world_art_id,
+                    kinopoisk_id=serial.kinopoisk_id,
+                    countries=serial.material_data.countries or [],
+                    actors=serial.material_data.actors or [],
+                    directors=serial.material_data.directors or [],
+                    studios=serial.material_data.studios or [],
+                    rating=serial.material_data.kinopoisk_rating,
+                    votes=serial.material_data.kinopoisk_votes,
+                    # заполняем перевод
+                    translators=[Translator(
+                        id=serial.translator_id,
+                        name=serial.translator,
+                        episodes=_get_episodes(serial)
+                    )]
+                )
 
-                for serial in CreateNew([serial]).storage.values():
+                output = prepared.to_dict()
 
-                    querystring = {"access_token": self.access_token}
+                anime = AnimeModel.create(**output)
 
-                    # отправка запроса
-                    # WARNING: замените на свой способ отправки новой серии
-                    res = requests.post(f'{self.url}/anime.create', json=serial.to_dict(), params=querystring)
-                    if res.ok:
-                        log.debug(f' * создано {serial.title}')
-                    else:
-                        raise Exception(res.json()['data'])
+                log.debug(f' * обновление {anime.title}')
 
-    def get_by_title(self, title: str) -> Dict[str, Any]:
+                for tr in prepared.translators:
+                    a_tr = AnimeTranslatorModel.create(anime_id=anime.aid, translator_id=tr.id, name=tr.name)
+
+                    for e_idx, episode in enumerate(tr.episodes):
+                        EpisodeModel.create(name=e_idx, stream_url=episode, atid=a_tr.id)
+
+    def get_by_title(self, title: str) -> AnimeModel:
         """
         Получение аниме по его названию из API
         :param title: название
         :return:
         """
-
-        res = requests.get(f'{self.url}/anime.search', params={
-            'q': title,
-            'access_token': self.access_token
-        })
-
-        out = res.json()['animes']
+        out: AnimeModel = AnimeModel.get_or_none(title=title)
         if out is None:
             raise AnimeNotExist
 
-        res = requests.get(f'{self.url}/anime.get', params={
-            'anime_id': out[0]['id'],
-            'access_token': self.access_token
-        })
-        return res.json()['anime']
+        return out
 
     def update(self, anime_id: int, translators: List[Translator]) -> Anime:
-        res = requests.post(f'{self.url}/anime.update', params={
-            'anime_id': anime_id,
-            'access_token': self.access_token
-        }, json={
-            'translators': [tr.to_dict() for tr in translators]
-        })
-        return Anime.from_dict(res.json()['anime'])
+        anime = AnimeModel.get_or_none(aid=anime_id)
+        for tr in translators:
+            translator = AnimeTranslatorModel.get_or_create(anime_id=anime_id, name=tr.name, translator_id=tr.id)
+
+            EpisodeModel.delete().where(EpisodeModel.atid == translator.id).execute()
+            for e_idx, episode in enumerate(tr.episodes):
+                EpisodeModel.create(name=e_idx, stream_url=episode, atid=translator.id)
+
+        return anime
 
 
 class CreateNew:
@@ -161,7 +164,7 @@ class CreateNew:
                     return
                 self.storage[key] = Anime(
                     id=None,
-                    title=serial.title_ru,
+                    title=serial.title,
                     title_en=serial.title_en,
                     title_or='-',
                     annotation=serial.material_data.description,
