@@ -10,7 +10,7 @@ from src.transform import CreateNew
 log.info('Получение списка всех сериалов')
 raw = MoonwalkAPI().get_serials()
 
-data = CreateNew(raw[:10])
+data = CreateNew(raw)
 log.debug(f'После преобразования {len(data.storage)}')
 
 log.debug(f'Создание сериалов на сервере')

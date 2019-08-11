@@ -164,7 +164,7 @@ class CreateNew:
                     return
                 self.storage[key] = Anime(
                     id=None,
-                    title=serial.title,
+                    title=serial.title_ru,
                     title_en=serial.title_en,
                     title_or='-',
                     annotation=serial.material_data.description,
