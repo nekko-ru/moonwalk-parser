@@ -1,9 +1,14 @@
+import os
+
 from peewee import *
 from datetime import datetime
 from playhouse.postgres_ext import ArrayField, PostgresqlExtDatabase
 
-
-db = PostgresqlExtDatabase('website_development', host='127.0.0.1', user='postgres', password='postgres')
+database_url = os.getenv('DATABASE_URL', False)
+if database_url:
+    db = PostgresqlExtDatabase(database_url)
+else:
+    db = PostgresqlExtDatabase('website_development', host='127.0.0.1', user='postgres', password='postgres')
 
 
 class AnimeModel(Model):
