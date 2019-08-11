@@ -151,7 +151,7 @@ class MaterialData:
         actors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("actors"))
         directors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("directors"))
         studios = from_union([lambda x: from_list(from_str, x), from_none], obj.get("studios"))
-        kinopoisk_rating = from_union([from_float, from_none], obj.get("kinopoisk_rating"))
+        kinopoisk_rating = from_union([from_float, from_none], obj.get("kinopoisk_rating", 5))
         kinopoisk_votes = from_union([from_int, from_none], obj.get("kinopoisk_votes"))
         imdb_rating = from_union([from_float, from_none], obj.get("imdb_rating"))
         imdb_votes = from_union([from_int, from_none], obj.get("imdb_votes"))

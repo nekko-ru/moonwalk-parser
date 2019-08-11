@@ -1,3 +1,5 @@
+peewee
+psycopg2
 certifi==2019.6.16
 chardet==3.0.4
 codecov==2.0.15
