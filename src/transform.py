@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from typing import List, Dict, Any
 
 from loguru import logger as log
@@ -58,6 +59,7 @@ class Update:
                 for e_idx, episode in enumerate(_get_episodes(serial)):
                     EpisodeModel.create(name=e_idx, stream_url=episode, atid=tr.id)
 
+                data.save()
                 self.updated.append(
                     data
                 )
