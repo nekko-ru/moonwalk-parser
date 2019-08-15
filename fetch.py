@@ -17,7 +17,7 @@ log.debug(f'Создание сериалов на сервере')
 for idx, serial in enumerate(data.storage.values()):
     output = serial.to_dict()
 
-    anime = AnimeModel.create(**output)
+    anime = AnimeModel.create(**output, aid=idx)
 
     log.debug(f' * создано {anime.title}')
 
