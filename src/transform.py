@@ -22,6 +22,8 @@ def _get_episodes(serial: Serials, no_control: bool = True) -> List[str]:
     for season in serial.season_episodes_count:
         log.debug(f' - сезон {season.season_number}, кол-во серий {season.episodes_count}')
         for episode in season.episodes:
+            # if need https
+            serial.iframe_url = serial.iframe_url.replace('http://moonwalk.cc', 'https://streamguard.cc')
             if no_control:
                 urls.append(serial.iframe_url + f'?episode={episode}&season={season.season_number}'
                 f'&nocontrols_translations=1&nocontrols=1')
