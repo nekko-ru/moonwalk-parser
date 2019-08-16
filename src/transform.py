@@ -98,7 +98,7 @@ class Update:
 
                 output = prepared.to_dict()
 
-                anime = AnimeModel.create(**output)
+                anime = AnimeModel.create(**output, aid=prepared.id)
 
                 log.debug(f' * обновление {anime.title}')
 
