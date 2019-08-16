@@ -97,8 +97,9 @@ class Update:
                 )
 
                 output = prepared.to_dict()
+                # fixme: rewrite
                 del output['id']
-                anime = AnimeModel.create(**output, aid=prepared.id)
+                anime = AnimeModel.create(**output, aid=AnimeModel.select().count() + 1)
 
                 log.debug(f' * обновление {anime.title}')
 
