@@ -42,9 +42,7 @@ class Update:
     """
     Класс для обновления серий, проверяет есть ли на сервере это аниме и если есть то добавляет новую серию
     """
-    url: str = "http://localhost:8084"
     updated: List[Anime] = []
-    access_token: str = os.getenv('NEKKOCH_ACCESS_TOKEN', '')
 
     def __init__(self, raw: List[Serials]):
         for serial in raw:
@@ -77,7 +75,7 @@ class Update:
                     title_or='-',
                     annotation=serial.material_data.description,
                     description=serial.material_data.description,
-                    posters=[serial.material_data.poster],
+                    posters=[serial.material_data.poster or 'https://via.placeholder.com/450'],
                     type=serial.type,
                     genres=serial.material_data.genres or [],
                     status='Закончено',
