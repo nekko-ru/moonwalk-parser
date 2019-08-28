@@ -30,7 +30,6 @@ class AnimeModel(BaseDbModel):
     annotation = CharField()
     description = TextField()
     posters = ArrayField(CharField)
-    genres = ArrayField(CharField)
     status = CharField()
     year = IntegerField()
     rating = DecimalField()
@@ -46,6 +45,25 @@ class AnimeModel(BaseDbModel):
     class Meta:
         database = db
         table_name = 'animes'
+
+
+class AnimeGenres(Model):
+    genre_id = IntegerField(column_name='genre_id')
+    anime_id = IntegerField(column_name='anime_id')
+
+    class Meta:
+        database = db
+        primary_key = False
+        table_name = 'animes_genres'
+
+
+class Genres(BaseDbModel):
+    id = IntegerField(primary_key=True, column_name='id')
+    name = CharField()
+
+    class Meta:
+        database = db
+        table_name = 'genres'
 
 
 class AnimeTranslatorModel(BaseDbModel):

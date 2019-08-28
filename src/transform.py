@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 from loguru import logger as log
 from playhouse.shortcuts import model_to_dict
 
-from src.models.AnimeModel import AnimeModel, AnimeTranslatorModel, EpisodeModel
+from src.models.AnimeModel import AnimeModel, AnimeTranslatorModel, EpisodeModel, Genres, AnimeGenres
 from src.moonwalk.types.base import Serials
 from src.nekkoch.types.base import Anime, Translator
 
@@ -100,6 +100,13 @@ class Update:
                 # fixme: rewrite
                 del output['id']
                 anime = AnimeModel.create(**output, aid=AnimeModel.select().count() + 1)
+
+                for genre in prepared.genres:
+                    try:
+                        gr = Genres.select().where(Genres.name.contains(genre)).get()
+                    except Genres.DoesNotExist:
+                        continue
+                    AnimeGenres.create(anime_id=anime.aid, genre_id=gr.id)
 
                 log.debug(f' * обновление {anime.title}')
 
