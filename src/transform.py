@@ -100,7 +100,7 @@ class Update:
                 output = prepared.to_dict()
                 # fixme: rewrite
                 del output['id']
-                anime = AnimeModel.create(**output, aid=AnimeModel.select().count() + 1)
+                anime = AnimeModel.create(**output, aid=AnimeModel.select().count() + 1, hide=True)
 
                 for genre in prepared.genres:
                     try:

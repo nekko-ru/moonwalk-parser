@@ -42,6 +42,7 @@ class AnimeModel(BaseDbModel):
     studios = ArrayField(CharField)
     youtube_trailer_url = CharField()
     slug = CharField()
+    hide = BooleanField(default=False)
 
     class Meta:
         database = db
