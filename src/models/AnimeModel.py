@@ -29,7 +29,6 @@ class AnimeModel(BaseDbModel):
     title_or = CharField()
     annotation = CharField()
     description = TextField()
-    posters = ArrayField(CharField)
     status = CharField()
     year = IntegerField()
     rating = DecimalField()
@@ -41,6 +40,8 @@ class AnimeModel(BaseDbModel):
     actors = ArrayField(CharField)
     directors = ArrayField(CharField)
     studios = ArrayField(CharField)
+    youtube_trailer_url = CharField()
+    slug = CharField()
 
     class Meta:
         database = db

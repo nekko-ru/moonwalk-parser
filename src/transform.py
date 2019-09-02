@@ -57,7 +57,8 @@ class Update:
 
                 deleted = EpisodeModel.delete().where(EpisodeModel.atid == tr.id).execute()
                 for e_idx, episode in enumerate(_get_episodes(serial)):
-                    EpisodeModel.create(name=e_idx, stream_url=episode, atid=tr.id)
+                    # fix errors if pg not ++ id
+                    EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1, name=e_idx, stream_url=episode, atid=tr.id)
 
                 data.save()
                 self.updated.append(
@@ -114,7 +115,7 @@ class Update:
                     a_tr = AnimeTranslatorModel.create(anime_id=anime.aid, translator_id=tr.id, name=tr.name)
 
                     for e_idx, episode in enumerate(tr.episodes):
-                        EpisodeModel.create(name=e_idx, stream_url=episode, atid=a_tr.id)
+                        EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1, name=e_idx, stream_url=episode, atid=a_tr.id)
 
     def get_by_title(self, title: str) -> AnimeModel:
         """
