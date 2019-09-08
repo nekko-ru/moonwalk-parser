@@ -55,10 +55,14 @@ class Update:
                     anime_id=data.aid
                 )
 
-                deleted = EpisodeModel.delete().where(EpisodeModel.atid == tr.id).execute()
-                for e_idx, episode in enumerate(_get_episodes(serial)):
-                    # fix errors if pg not ++ id
-                    EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1, name=e_idx, stream_url=episode, atid=tr.id)
+                exist = EpisodeModel.select().where(EpisodeModel.atid == tr.id).count()
+                eps = _get_episodes(serial)
+                if exist != len(eps):
+                    for e_idx, episode in enumerate(eps[exist:]):
+                        # fix errors if pg not ++ id
+                        last_ep = EpisodeModel.select().order_by(EpisodeModel.id.desc()).get()
+                        EpisodeModel.create(id=last_ep.id + 1,
+                                            name=int(last_ep.name) + 1, stream_url=episode, atid=tr.id)
 
                 data.save()
                 self.updated.append(
@@ -112,7 +116,9 @@ class Update:
                 log.debug(f' * обновление {anime.title}')
 
                 for tr in prepared.translators:
-                    a_tr = AnimeTranslatorModel.create(anime_id=anime.aid, translator_id=tr.id, name=tr.name)
+                    a_tr = AnimeTranslatorModel.create(id=AnimeTranslatorModel.select()
+                                                       .order_by(AnimeTranslatorModel.id.desc()).get().id + 1,
+                                                       anime_id=anime.aid, translator_id=tr.id, name=tr.name)
 
                     for e_idx, episode in enumerate(tr.episodes):
                         EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1, name=e_idx, stream_url=episode, atid=a_tr.id)
