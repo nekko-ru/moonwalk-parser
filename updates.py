@@ -3,7 +3,8 @@ import requests
 from loguru import logger as log
 
 # setup logger
-log.add("logs/moonwalk_update_{time}.log", retention="1 week", compression="zip", enqueue=True, serialize=True) 
+log.add("logs/moonwalk_update_{time}.log", retention="1 week", compression="zip", enqueue=True, serialize=True)
+log.add("logs/moonwalk_update.log", retention="2 days", enqueue=True)
 
 from src.moonwalk.api import MoonwalkAPI
 from src.transform import CreateNew, Update
