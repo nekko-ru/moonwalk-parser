@@ -5,7 +5,7 @@ import requests
 from loguru import logger as log
 from dataclasses import dataclass
 
-from src.moonwalk.types.base import Serials
+from src.moonwalk.types.base import Serials, Movies
 
 
 @dataclass
@@ -44,7 +44,19 @@ class MoonwalkAPI:
         return [Serials.from_dict(i) for i in res['report']['serials']]
 
     def get_movies(self):
-        raise NotImplemented
+        log.debug('выполнение запроса на получение списка фильмов')
+        # выполняем http запрос к видео балансеру для получения всех сериалов
+        # и сразу же преобразуем в json
+        r = requests.get(f'{self.base_url}/movies_anime.json', params={
+            'api_token': self.api_token
+        })
+        log.debug(f'статус ответа {r.status_code}')
+
+        res = r.json()
+
+        # каждый обьект из json поля 'serials' преобразует в класс для более удобной работы
+        # и создаем список из сериалов
+        return [Movies.from_dict(i) for i in res['report']['movies']]
 
     def updates_serials(self):
         log.debug('выполнение запроса на получение списка обновлений сериалов')

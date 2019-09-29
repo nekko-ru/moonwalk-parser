@@ -31,7 +31,6 @@ class AnimeModel(BaseDbModel):
     description = TextField()
     status = CharField()
     year = IntegerField()
-    rating = DecimalField()
     blocked_ru = BooleanField(default=False)
     blocked_ua = BooleanField(default=False)
     world_art_id = CharField()
@@ -43,6 +42,7 @@ class AnimeModel(BaseDbModel):
     youtube_trailer_url = CharField()
     slug = CharField()
     hide = BooleanField(default=False)
+    media_id = IntegerField(column_name='media_id')
 
     class Meta:
         database = db
@@ -87,3 +87,14 @@ class EpisodeModel(BaseDbModel):
     class Meta:
         database = db
         table_name = 'episodes'
+
+
+class Media(BaseDbModel):
+    id = IntegerField(primary_key=True, column_name='id')
+    nsfw = BooleanField()
+    media_type = IntegerField(column_name='media_type')
+    rating = IntegerField()
+
+    class Meta:
+        database = db
+        table_name = 'media'

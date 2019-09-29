@@ -5,31 +5,37 @@ from typing import List, Dict, Any
 from loguru import logger as log
 from playhouse.shortcuts import model_to_dict
 
-from src.models.AnimeModel import AnimeModel, AnimeTranslatorModel, EpisodeModel, Genres, AnimeGenres
-from src.moonwalk.types.base import Serials
+from src.models.AnimeModel import AnimeModel, AnimeTranslatorModel, EpisodeModel, Genres, AnimeGenres, Media
+from src.moonwalk.types.base import Serials, Movies
 from src.nekkoch.types.base import Anime, Translator
 
 
-def _get_episodes(serial: Serials, no_control: bool = True) -> List[str]:
+def _get_episodes(serial: Serials or Movies, no_control: bool = True) -> List[str]:
     """
     Создает список ссылок на iframe с указанием серии и сезона, а так же отключеным управление (опционально)
     :param serial:
     :return:
     """
     log.debug(f'Получение ссылок для {serial.title_ru}')
-
     urls = []
-    for season in serial.season_episodes_count:
-        log.debug(f' - сезон {season.season_number}, кол-во серий {season.episodes_count}')
-        for episode in season.episodes:
-            # if need https
-            serial.iframe_url = serial.iframe_url.replace('http://moonwalk.cc', 'https://streamguard.cc')
-            if no_control:
-                urls.append(serial.iframe_url + f'?episode={episode}&season={season.season_number}'
-                f'&nocontrols_translations=1&nocontrols=1')
-            else:
-                urls.append(serial.iframe_url + f'?episode={episode}&season={season.season_number}'
-                f'&nocontrols_translations=1')
+
+    if type(serial) is Movies:
+        if no_control:
+            urls.append(serial.iframe_url + f'?nocontrols_translations=1&nocontrols=1')
+        else:
+            urls.append(serial.iframe_url)
+    else:
+        for season in serial.season_episodes_count:
+            log.debug(f' - сезон {season.season_number}, кол-во серий {season.episodes_count}')
+            for episode in season.episodes:
+                # if need https
+                serial.iframe_url = serial.iframe_url.replace('http://moonwalk.cc', 'https://streamguard.cc')
+                if no_control:
+                    urls.append(serial.iframe_url + f'?episode={episode}&season={season.season_number}'
+                                                    f'&nocontrols_translations=1&nocontrols=1')
+                else:
+                    urls.append(serial.iframe_url + f'?episode={episode}&season={season.season_number}'
+                                                    f'&nocontrols_translations=1')
 
     return urls
 
@@ -51,6 +57,7 @@ class Update:
                 log.debug(f'Нашли id={data.aid} для {data.title}')
 
                 tr, _ = AnimeTranslatorModel.get_or_create(
+                    id=AnimeTranslatorModel.select().order_by(AnimeTranslatorModel.id.desc()).get().id + 1,
                     name=serial.translator,
                     anime_id=data.aid
                 )
@@ -104,7 +111,16 @@ class Update:
                 output = prepared.to_dict()
                 # fixme: rewrite
                 del output['id']
-                anime = AnimeModel.create(**output, aid=AnimeModel.select().count() + 1, hide=True)
+
+                media = Media.create(
+                    id=Media.select().order_by(Media.id.desc()).get().id + 1,
+                    nsfw=False,
+                    media_type=0,
+                    rating=5,
+                )
+
+                anime = AnimeModel.create(**output, aid=AnimeModel.select().order_by(AnimeModel.id.desc()).get().id + 1,
+                                          hide=True, media_id=media.id)
 
                 for genre in prepared.genres:
                     try:
@@ -121,7 +137,8 @@ class Update:
                                                        anime_id=anime.aid, translator_id=tr.id, name=tr.name)
 
                     for e_idx, episode in enumerate(tr.episodes):
-                        EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1, name=e_idx, stream_url=episode, atid=a_tr.id)
+                        EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1,
+                                            name=e_idx, stream_url=episode, atid=a_tr.id)
 
     def get_by_title(self, title: str) -> AnimeModel:
         """
@@ -155,7 +172,7 @@ class CreateNew:
     # список аниме которые не были импортированы из за отсутствия каких либо важных данных
     with_error: List[Serials] = []
 
-    def __init__(self, raw: List[Serials]):
+    def __init__(self, raw: List[Serials or Movies]):
         for serial in raw:
             self._create_or_append(serial)
 
