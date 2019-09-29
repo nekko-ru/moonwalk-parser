@@ -1,11 +1,6 @@
-import os
-from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict
 
 from loguru import logger as log
-from playhouse.shortcuts import model_to_dict
-
-from src.models.AnimeModel import AnimeModel, AnimeTranslatorModel, EpisodeModel, Genres, AnimeGenres, Media
 from src.moonwalk.types.base import Serials, Movies
 from src.nekkoch.types.base import Anime, Translator
 
@@ -19,7 +14,7 @@ def _get_episodes(serial: Serials or Movies, no_control: bool = True) -> List[st
     log.debug(f'Получение ссылок для {serial.title_ru}')
     urls = []
 
-    if type(serial) is Movies:
+    if getattr(serial, 'season_episodes_count', None) is None:
         if no_control:
             urls.append(serial.iframe_url + f'?nocontrols_translations=1&nocontrols=1')
         else:
@@ -42,126 +37,6 @@ def _get_episodes(serial: Serials or Movies, no_control: bool = True) -> List[st
 
 class AnimeNotExist(BaseException):
     pass
-
-
-class Update:
-    """
-    Класс для обновления серий, проверяет есть ли на сервере это аниме и если есть то добавляет новую серию
-    """
-    updated: List[Anime] = []
-
-    def __init__(self, raw: List[Serials]):
-        for serial in raw:
-            try:
-                data = self.get_by_title(serial.title_ru)
-                log.debug(f'Нашли id={data.aid} для {data.title}')
-
-                tr, _ = AnimeTranslatorModel.get_or_create(
-                    id=AnimeTranslatorModel.select().order_by(AnimeTranslatorModel.id.desc()).get().id + 1,
-                    name=serial.translator,
-                    anime_id=data.aid
-                )
-
-                exist = EpisodeModel.select().where(EpisodeModel.atid == tr.id).count()
-                eps = _get_episodes(serial)
-                if exist != len(eps):
-                    for e_idx, episode in enumerate(eps[exist:]):
-                        # fix errors if pg not ++ id
-                        last_ep = EpisodeModel.select().order_by(EpisodeModel.id.desc()).get()
-                        EpisodeModel.create(id=last_ep.id + 1,
-                                            name=int(last_ep.name) + 1, stream_url=episode, atid=tr.id)
-
-                data.save()
-                self.updated.append(
-                    data
-                )
-            except Exception as e:
-                log.exception(e)
-
-            except AnimeNotExist:
-                log.info('Аниме не было найдено, нужно создать его')
-                prepared = Anime(
-                    id=None,
-                    title=serial.title_ru,
-                    title_en=serial.title_en,
-                    title_or='-',
-                    annotation=serial.material_data.description,
-                    description=serial.material_data.description,
-                    posters=[serial.material_data.poster or 'https://via.placeholder.com/450'],
-                    type=serial.type,
-                    genres=serial.material_data.genres or [],
-                    status='Закончено',
-                    year=serial.material_data.year,
-                    world_art_id=serial.world_art_id,
-                    kinopoisk_id=serial.kinopoisk_id,
-                    countries=serial.material_data.countries or [],
-                    actors=serial.material_data.actors or [],
-                    directors=serial.material_data.directors or [],
-                    studios=serial.material_data.studios or [],
-                    rating=serial.material_data.kinopoisk_rating,
-                    votes=serial.material_data.kinopoisk_votes,
-                    # заполняем перевод
-                    translators=[Translator(
-                        id=serial.translator_id,
-                        name=serial.translator,
-                        episodes=_get_episodes(serial)
-                    )]
-                )
-
-                output = prepared.to_dict()
-                # fixme: rewrite
-                del output['id']
-
-                media = Media.create(
-                    id=Media.select().order_by(Media.id.desc()).get().id + 1,
-                    nsfw=False,
-                    media_type=0,
-                    rating=5,
-                )
-
-                anime = AnimeModel.create(**output, aid=AnimeModel.select().order_by(AnimeModel.id.desc()).get().id + 1,
-                                          hide=True, media_id=media.id)
-
-                for genre in prepared.genres:
-                    try:
-                        gr = Genres.select().where(Genres.name.contains(genre)).get()
-                    except Genres.DoesNotExist:
-                        continue
-                    AnimeGenres.create(anime_id=anime.aid, genre_id=gr.id)
-
-                log.debug(f' * обновление {anime.title}')
-
-                for tr in prepared.translators:
-                    a_tr = AnimeTranslatorModel.create(id=AnimeTranslatorModel.select()
-                                                       .order_by(AnimeTranslatorModel.id.desc()).get().id + 1,
-                                                       anime_id=anime.aid, translator_id=tr.id, name=tr.name)
-
-                    for e_idx, episode in enumerate(tr.episodes):
-                        EpisodeModel.create(id=EpisodeModel.select().order_by(EpisodeModel.id.desc()).get().id + 1,
-                                            name=e_idx, stream_url=episode, atid=a_tr.id)
-
-    def get_by_title(self, title: str) -> AnimeModel:
-        """
-        Получение аниме по его названию из API
-        :param title: название
-        :return:
-        """
-        out: AnimeModel = AnimeModel.get_or_none(title=title)
-        if out is None:
-            raise AnimeNotExist
-
-        return out
-
-    def update(self, anime_id: int, translators: List[Translator]) -> Anime:
-        anime = AnimeModel.get_or_none(aid=anime_id)
-        for tr in translators:
-            translator = AnimeTranslatorModel.get_or_create(anime_id=anime_id, name=tr.name, translator_id=tr.id)
-
-            EpisodeModel.delete().where(EpisodeModel.atid == translator.id).execute()
-            for e_idx, episode in enumerate(tr.episodes):
-                EpisodeModel.create(name=e_idx, stream_url=episode, atid=translator.id)
-
-        return anime
 
 
 class CreateNew:
@@ -203,7 +78,7 @@ class CreateNew:
                     title_or='-',
                     annotation=serial.material_data.description,
                     description=serial.material_data.description,
-                    posters=[serial.material_data.poster],
+                    poster=serial.material_data.poster,
                     type=serial.type,
                     genres=serial.material_data.genres or [],
                     status='Закончено',
@@ -228,6 +103,9 @@ class CreateNew:
                 # на случай если есть сломаные (не только без material_data)
                 pass
         else:
+            if [i for i in self.storage[key].translators if i.name == serial.translator]:
+                return
+
             self.storage[key].translators.append(Translator(
                 id=serial.translator_id,
                 name=serial.translator,

@@ -77,7 +77,7 @@ class Anime:
     title_or: Optional[str]
     annotation: Optional[str]
     description: Optional[str]
-    posters: Optional[List[str]]
+    poster: Optional[str]
     type: Optional[str]
     genres: Optional[List[str]]
     translators: Optional[List[Translator]]
@@ -101,7 +101,7 @@ class Anime:
         title_or = from_union([from_str, from_none], obj.get("title_or"))
         annotation = from_union([from_str, from_none], obj.get("annotation"))
         description = from_union([from_str, from_none], obj.get("description", "-"))
-        posters = from_union([lambda x: from_list(from_str, x), from_none], obj.get("posters"))
+        poster = from_union([from_int, from_none], obj.get("poster"))
         type = from_union([from_str, from_none], obj.get("type"))
         genres = from_union([lambda x: from_list(from_str, x), from_none], obj.get("genres"))
         translators = from_union([lambda x: from_list(Translator.from_dict, x), from_none], obj.get("translators"))
@@ -115,7 +115,7 @@ class Anime:
         actors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("actors"))
         directors = from_union([lambda x: from_list(from_str, x), from_none], obj.get("directors"))
         studios = from_union([lambda x: from_list(from_str, x), from_none], obj.get("studios"))
-        return Anime(id_, title, title_en, title_or, annotation, description, posters, type, genres, translators, status, year, world_art_id, kinopoisk_id, rating, votes, countries, actors, directors, studios)
+        return Anime(id_, title, title_en, title_or, annotation, description, poster, type, genres, translators, status, year, world_art_id, kinopoisk_id, rating, votes, countries, actors, directors, studios)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -125,7 +125,7 @@ class Anime:
         result["title_or"] = from_union([from_str, from_none], self.title_or)
         result["annotation"] = from_union([from_str, from_none], self.annotation)
         result["description"] = from_union([from_str, from_none], self.description)
-        result["posters"] = from_union([lambda x: from_list(from_str, x), from_none], self.posters)
+        result["poster"] = from_union([from_str, from_none], self.poster)
         result["type"] = from_union([from_str, from_none], self.type)
         result["genres"] = from_union([lambda x: from_list(from_str, x), from_none], self.genres)
         result["translators"] = from_union([lambda x: from_list(lambda x: to_class(Translator, x), x), from_none], self.translators)
