@@ -48,6 +48,9 @@ class CreateNew:
     with_error: List[Serials] = []
 
     def __init__(self, raw: List[Serials or Movies]):
+        self.storage = {}
+        self.with_error = []
+
         for serial in raw:
             self._create_or_append(serial)
 
@@ -62,7 +65,7 @@ class CreateNew:
         :param serial:
         :return:
         """
-        key = serial.title_ru
+        key = serial.title_en
 
         anime = self.storage.get(key, None)
         if anime is None:
