@@ -24,4 +24,5 @@ def fetch():
     return jsonify([i.to_dict() for i in animes.storage.values()])
 
 
-app.run(port=8080)
+if __name__ == '__main__':
+    app.run(port=8080, host='0.0.0.0')
